@@ -222,6 +222,34 @@ START_TEST (modargs_test_get_value_double) {
 }
 END_TEST
 
+// test pa_modargs_get_value_volume()
+START_TEST (modargs_test_get_value_volume) {
+    const char* keys[] = {
+        "valueA",
+        "valueZ",
+        NULL
+    };
+    pa_modargs *args;
+    pa_volume_t value;
+
+    args = pa_modargs_new("valueA=12.25dB valueZ=aoeui", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    // test extracting and parsing
+    ck_assert_int_eq(pa_modargs_get_value_volume(args, "valueA", &value), 0);
+    ck_assert_int_eq(value, 104869);
+
+    // test extracting and parsing failure
+    ck_assert_int_lt(pa_modargs_get_value_volume(args, "valueZ", &value), 0);
+
+    // test extracting an undefined value
+    // TODO: this test fails to signal failure
+    // ck_assert_int_lt(pa_modargs_get_value_double(args, "ghi", &value), 0);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
 int main(int argc, char *argv[]) {
     int failed = 0;
     Suite *s;
@@ -241,6 +269,7 @@ int main(int argc, char *argv[]) {
     tcase_add_test(tc, modargs_test_get_value_s32);
     tcase_add_test(tc, modargs_test_get_value_boolean);
     tcase_add_test(tc, modargs_test_get_value_double);
+    tcase_add_test(tc, modargs_test_get_value_volume);
     suite_add_tcase(s, tc);
 
     sr = srunner_create(s);
