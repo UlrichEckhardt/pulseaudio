@@ -156,6 +156,29 @@ START_TEST (modargs_test_get_value_s32) {
 }
 END_TEST
 
+START_TEST (modargs_test_get_value_boolean) {
+    const char* keys[] = {
+        "abc",
+        "def",
+        NULL
+    };
+    pa_modargs *args;
+    bool value;
+
+    args = pa_modargs_new("abc=true def=whatever", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    /* test extracting and parsing */
+    ck_assert_int_eq(pa_modargs_get_value_boolean(args, "abc", &value), 0);
+    ck_assert(value == true);
+
+    /* test extracting and parsing failure */
+    ck_assert_int_lt(pa_modargs_get_value_boolean(args, "def", &value), 0);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
 int main(int argc, char *argv[]) {
     int failed = 0;
     Suite *s;
@@ -173,6 +196,7 @@ int main(int argc, char *argv[]) {
     tcase_add_test(tc, modargs_test_get_value_2);
     tcase_add_test(tc, modargs_test_get_value_u32);
     tcase_add_test(tc, modargs_test_get_value_s32);
+    tcase_add_test(tc, modargs_test_get_value_boolean);
     suite_add_tcase(s, tc);
 
     sr = srunner_create(s);
