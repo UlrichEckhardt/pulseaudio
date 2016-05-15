@@ -262,6 +262,7 @@ TESTS_default = \
 		thread-test \
 		volume-test \
 		mix-test \
+		modargs-test \
 		proplist-test \
 		cpu-mix-test \
 		cpu-remap-test \
@@ -531,6 +532,11 @@ mix_test_SOURCES = tests/mix-test.c
 mix_test_LDADD = $(AM_LDADD) libpulsecore-@PA_MAJORMINOR@.la libpulse.la libpulsecommon-@PA_MAJORMINOR@.la
 mix_test_CFLAGS = $(AM_CFLAGS) $(LIBCHECK_CFLAGS)
 mix_test_LDFLAGS = $(AM_LDFLAGS) $(BINLDFLAGS) $(LIBCHECK_LIBS)
+
+modargs_test_SOURCES = tests/modargs-test.c
+modargs_test_LDADD = $(AM_LDADD) libpulsecore-@PA_MAJORMINOR@.la libpulse.la libpulsecommon-@PA_MAJORMINOR@.la
+modargs_test_CFLAGS = $(AM_CFLAGS) $(LIBCHECK_CFLAGS)
+modargs_test_LDFLAGS = $(AM_LDFLAGS) $(BINLDFLAGS) $(LIBCHECK_LIBS)
 
 remix_test_SOURCES = tests/remix-test.c
 remix_test_LDADD = $(AM_LDADD) libpulsecore-@PA_MAJORMINOR@.la libpulse.la libpulsecommon-@PA_MAJORMINOR@.la

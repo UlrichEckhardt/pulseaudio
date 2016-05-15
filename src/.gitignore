@@ -60,6 +60,7 @@ mcalign-test
 memblockq-test
 memblock-test
 mix-test
+modargs-test
 once-test
 pacat-simple
 parec-simple
