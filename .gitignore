@@ -1,5 +1,6 @@
 .tarball-version
 .version
+.vscode
 .*.swp
 ABOUT-NLS
 build-aux
