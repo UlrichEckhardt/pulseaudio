@@ -52,6 +52,63 @@ START_TEST (modargs_test_empty_string) {
 }
 END_TEST
 
+// test calling pa_modargs_get_value("", ..)
+START_TEST (modargs_test_get_value_1) {
+    const char* keys[] = {
+        "abc",
+        NULL
+    };
+    pa_modargs *args;
+    const char* value;
+
+    args = pa_modargs_new("", keys);
+    ck_assert(args != NULL);
+
+    // default value handling
+    value = pa_modargs_get_value(args, "abc", NULL);
+    ck_assert(value == NULL);
+
+    // default value handling
+    value = pa_modargs_get_value(args, "abc", "default value");
+    ck_assert(value != NULL);
+    ck_assert_str_eq(value, "default value");
+
+    // unknown key handling
+    value = pa_modargs_get_value(args, "def", "default value");
+    ck_assert(value != NULL);
+    ck_assert_str_eq(value, "default value");
+
+    pa_modargs_free(args);
+}
+END_TEST
+
+// test calling pa_modargs_get_value()
+START_TEST (modargs_test_get_value_2) {
+    const char* keys[] = {
+        "abc",
+        "def",
+        "ghi",
+        NULL
+    };
+    pa_modargs *args;
+    const char* value;
+
+    args = pa_modargs_new("abc=123 def=xyz", keys);
+    ck_assert_ptr_ne(NULL, args);
+
+    value = pa_modargs_get_value(args, "abc", "default value");
+    ck_assert_str_eq(value, "123");
+
+    value = pa_modargs_get_value(args, "def", "default value");
+    ck_assert_str_eq(value, "xyz");
+
+    value = pa_modargs_get_value(args, "def", "default value");
+    ck_assert_str_eq(value, "xyz");
+
+    pa_modargs_free(args);
+}
+END_TEST
+
 int main(int argc, char *argv[]) {
     int failed = 0;
     Suite *s;
@@ -65,6 +122,8 @@ int main(int argc, char *argv[]) {
     tc = tcase_create("modargs");
     tcase_add_test(tc, modargs_test_null);
     tcase_add_test(tc, modargs_test_empty_string);
+    tcase_add_test(tc, modargs_test_get_value_1);
+    tcase_add_test(tc, modargs_test_get_value_2);
     suite_add_tcase(s, tc);
 
     sr = srunner_create(s);
