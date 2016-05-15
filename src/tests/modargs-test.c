@@ -24,6 +24,32 @@
 #include <pulsecore/modargs.h>
 
 
+START_TEST (modargs_test_null) {
+    const char* keys[] = {
+        NULL
+    };
+    pa_modargs *args;
+
+    args = pa_modargs_new(NULL, keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
+START_TEST (modargs_test_empty_string) {
+    const char* keys[] = {
+        NULL
+    };
+    pa_modargs *args;
+
+    args = pa_modargs_new("", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
 int main(int argc, char *argv[]) {
     int failed = 0;
     Suite *s;
@@ -35,6 +61,8 @@ int main(int argc, char *argv[]) {
 
     s = suite_create("Modargs");
     tc = tcase_create("modargs");
+    tcase_add_test(tc, modargs_test_null);
+    tcase_add_test(tc, modargs_test_empty_string);
     suite_add_tcase(s, tc);
 
     sr = srunner_create(s);
