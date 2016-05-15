@@ -193,6 +193,35 @@ START_TEST (modargs_test_get_value_boolean) {
 }
 END_TEST
 
+// test pa_modargs_get_value_double()
+START_TEST (modargs_test_get_value_double) {
+    const char* keys[] = {
+        "abc",
+        "def",
+        NULL
+    };
+    pa_modargs *args;
+    double value;
+
+    args = pa_modargs_new("abc=12.25 def=whatever", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    // test extracting and parsing
+    ck_assert_int_eq(pa_modargs_get_value_double(args, "abc", &value), 0);
+    ck_assert(value <= 12.26);
+    ck_assert(value >= 12.24);
+
+    // test extracting and parsing failure
+    ck_assert_int_lt(pa_modargs_get_value_double(args, "def", &value), 0);
+
+    // test extracting an undefined value
+    // TODO: this test fails to signal failure
+    // ck_assert_int_lt(pa_modargs_get_value_double(args, "ghi", &value), 0);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
 int main(int argc, char *argv[]) {
     int failed = 0;
     Suite *s;
@@ -211,6 +240,7 @@ int main(int argc, char *argv[]) {
     tcase_add_test(tc, modargs_test_get_value_u32);
     tcase_add_test(tc, modargs_test_get_value_s32);
     tcase_add_test(tc, modargs_test_get_value_boolean);
+    tcase_add_test(tc, modargs_test_get_value_double);
     suite_add_tcase(s, tc);
 
     sr = srunner_create(s);
