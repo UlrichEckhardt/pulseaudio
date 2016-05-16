@@ -278,6 +278,85 @@ START_TEST (modargs_test_get_sample_rate_3) {
 }
 END_TEST
 
+START_TEST (modargs_test_get_sample_spec_1) {
+    const char* keys[] = {
+        "rate",
+        "format",
+        "channels",
+        NULL
+    };
+    pa_modargs *args;
+    pa_sample_spec value;
+
+    args = pa_modargs_new("rate=1234 format=s16be channels=4", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    ck_assert_int_eq(pa_modargs_get_sample_spec(args, &value), 0);
+    ck_assert_int_eq(value.rate, 1234);
+    ck_assert_int_eq(value.format, PA_SAMPLE_S16BE);
+    ck_assert_int_eq(value.channels, 4);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
+START_TEST (modargs_test_get_sample_spec_2) {
+    const char* keys[] = {
+        "rate",
+        "format",
+        "channels",
+        NULL
+    };
+    pa_modargs *args;
+    pa_sample_spec value;
+
+    args = pa_modargs_new("rate=0 format=s16be channels=4", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    ck_assert_int_lt(pa_modargs_get_sample_spec(args, &value), 0);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
+START_TEST (modargs_test_get_sample_spec_3) {
+    const char* keys[] = {
+        "rate",
+        "format",
+        "channels",
+        NULL
+    };
+    pa_modargs *args;
+    pa_sample_spec value;
+
+    args = pa_modargs_new("rate=1234 format=whatever channels=4", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    ck_assert_int_lt(pa_modargs_get_sample_spec(args, &value), 0);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
+START_TEST (modargs_test_get_sample_spec_4) {
+    const char* keys[] = {
+        "rate",
+        "format",
+        "channels",
+        NULL
+    };
+    pa_modargs *args;
+    pa_sample_spec value;
+
+    args = pa_modargs_new("rate=1234 format=s16be channels=0", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    ck_assert_int_lt(pa_modargs_get_sample_spec(args, &value), 0);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
 int main(int argc, char *argv[]) {
     int failed = 0;
     Suite *s;
@@ -301,6 +380,10 @@ int main(int argc, char *argv[]) {
     tcase_add_test(tc, modargs_test_get_sample_rate_1);
     tcase_add_test(tc, modargs_test_get_sample_rate_2);
     tcase_add_test(tc, modargs_test_get_sample_rate_3);
+    tcase_add_test(tc, modargs_test_get_sample_spec_1);
+    tcase_add_test(tc, modargs_test_get_sample_spec_2);
+    tcase_add_test(tc, modargs_test_get_sample_spec_3);
+    tcase_add_test(tc, modargs_test_get_sample_spec_4);
     suite_add_tcase(s, tc);
 
     sr = srunner_create(s);
