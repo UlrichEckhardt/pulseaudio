@@ -250,6 +250,61 @@ START_TEST (modargs_test_get_value_volume) {
 }
 END_TEST
 
+// test pa_modargs_get_sample_rate
+START_TEST (modargs_test_get_sample_rate_1) {
+    const char* keys[] = {
+        "rate",
+        NULL
+    };
+    pa_modargs *args;
+    uint32_t value;
+
+    args = pa_modargs_new("rate=1225", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    ck_assert_int_eq(pa_modargs_get_sample_rate(args, &value), 0);
+    ck_assert_int_eq(value, 1225);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
+// test pa_modargs_get_sample_rate for parsing failure
+START_TEST (modargs_test_get_sample_rate_2) {
+    const char* keys[] = {
+        "rate",
+        NULL
+    };
+    pa_modargs *args;
+    uint32_t value;
+
+    args = pa_modargs_new("rate=whatever", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    ck_assert_int_lt(pa_modargs_get_sample_rate(args, &value), 0);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
+// test pa_modargs_get_sample_rate for invalid rate detection
+START_TEST (modargs_test_get_sample_rate_3) {
+    const char* keys[] = {
+        "rate",
+        NULL
+    };
+    pa_modargs *args;
+    uint32_t value;
+
+    args = pa_modargs_new("rate=0", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    ck_assert_int_lt(pa_modargs_get_sample_rate(args, &value), 0);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
 int main(int argc, char *argv[]) {
     int failed = 0;
     Suite *s;
@@ -270,6 +325,9 @@ int main(int argc, char *argv[]) {
     tcase_add_test(tc, modargs_test_get_value_boolean);
     tcase_add_test(tc, modargs_test_get_value_double);
     tcase_add_test(tc, modargs_test_get_value_volume);
+    tcase_add_test(tc, modargs_test_get_sample_rate_1);
+    tcase_add_test(tc, modargs_test_get_sample_rate_2);
+    tcase_add_test(tc, modargs_test_get_sample_rate_3);
     suite_add_tcase(s, tc);
 
     sr = srunner_create(s);
