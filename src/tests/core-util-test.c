@@ -87,6 +87,8 @@ START_TEST (modargs_test_parse_volume) {
     ck_assert_int_lt(pa_parse_volume("on", &value), 0);
     ck_assert_int_lt(pa_parse_volume("off", &value), 0);
     ck_assert_int_lt(pa_parse_volume("none", &value), 0);
+    // Note: This breaks the check library itself:
+    // ck_assert_int_eq(pa_parse_volume("100%n", &value), 100);
 }
 END_TEST
 
