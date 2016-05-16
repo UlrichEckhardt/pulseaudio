@@ -357,6 +357,36 @@ START_TEST (modargs_test_get_sample_spec_4) {
 }
 END_TEST
 
+START_TEST (modargs_test_modargs_iterate) {
+    const char* keys[] = {
+        "one",
+        "two",
+        "four",
+        "eight",
+        NULL
+    };
+    pa_modargs *args;
+    void* state;
+    char const* key;
+    uint32_t sum;
+
+    args = pa_modargs_new("one=1 two=2 eight=8", keys);
+    ck_assert_ptr_ne(args, NULL);
+
+    state = NULL;
+    sum = 0;
+    for (key = pa_modargs_iterate(args, &state); key != NULL; key = pa_modargs_iterate(args, &state)) {
+        uint32_t tmp;
+        ck_assert_ptr_ne(key, NULL);
+        ck_assert_int_eq(pa_modargs_get_value_u32(args, key, &tmp), 0);
+        sum += tmp;
+    }
+    ck_assert_int_eq(sum, 11);
+
+    pa_modargs_free(args);
+}
+END_TEST
+
 int main(int argc, char *argv[]) {
     int failed = 0;
     Suite *s;
@@ -384,6 +414,7 @@ int main(int argc, char *argv[]) {
     tcase_add_test(tc, modargs_test_get_sample_spec_2);
     tcase_add_test(tc, modargs_test_get_sample_spec_3);
     tcase_add_test(tc, modargs_test_get_sample_spec_4);
+    tcase_add_test(tc, modargs_test_modargs_iterate);
     suite_add_tcase(s, tc);
 
     sr = srunner_create(s);
