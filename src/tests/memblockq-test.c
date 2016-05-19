@@ -124,6 +124,52 @@ START_TEST (memchunk_from_str_test) {
 }
 END_TEST
 
+START_TEST (memblockq_test_initial_properties) {
+    pa_mempool *p;
+    pa_memblockq *bq;
+    pa_memchunk silence;
+    pa_sample_spec ss = {
+        .format = PA_SAMPLE_S32BE,
+        .rate = 48000,
+        .channels = 1
+    };
+    int64_t idx = 0;
+    size_t maxlength = 100;
+    size_t tlength = 20;
+    size_t prebuf = 16;
+    size_t minreq = 8;
+    size_t maxrewind = 40;
+
+    pa_log_set_level(PA_LOG_DEBUG);
+
+    p = pa_mempool_new(PA_MEM_TYPE_PRIVATE, 0, true);
+    ck_assert_ptr_ne(p, NULL);
+
+    silence = memchunk_from_str(p, "__");
+
+    bq = pa_memblockq_new("test memblockq", idx, maxlength, tlength, &ss, prebuf, minreq, maxrewind, &silence);
+    fail_unless(bq != NULL);
+
+    // check initial properties
+    ck_assert_int_eq(pa_memblockq_is_readable(bq), false);
+    ck_assert_int_eq(pa_memblockq_get_length(bq), 0); // 0: empty
+    ck_assert_int_eq(pa_memblockq_missing(bq), tlength); // tlength-length
+    ck_assert_int_eq(pa_memblockq_get_maxlength(bq), maxlength);
+    ck_assert_int_eq(pa_memblockq_get_tlength(bq), tlength);
+    ck_assert_int_eq(pa_memblockq_get_prebuf(bq), prebuf);
+    ck_assert_int_eq(pa_memblockq_get_minreq(bq), minreq);
+    ck_assert_int_eq(pa_memblockq_get_maxrewind(bq), maxrewind);
+    ck_assert_int_eq(pa_memblockq_get_base(bq), pa_frame_size(&ss));
+    ck_assert_int_eq(pa_memblockq_get_read_index(bq), 0);
+    ck_assert_int_eq(pa_memblockq_get_write_index(bq), 0);
+
+    // cleanup
+    pa_memblockq_free(bq);
+    pa_memblock_unref(silence.memblock);
+    pa_mempool_unref(p);
+}
+END_TEST
+
 START_TEST (memblockq_test) {
     int ret;
 
@@ -233,6 +279,7 @@ int main(int argc, char *argv[]) {
     s = suite_create("Memblock Queue");
     tc = tcase_create("memblockq");
     tcase_add_test(tc, memchunk_from_str_test);
+    tcase_add_test(tc, memblockq_test_initial_properties);
     tcase_add_test(tc, memblockq_test);
     suite_add_tcase(s, tc);
 
