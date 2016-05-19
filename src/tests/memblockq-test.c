@@ -107,6 +107,7 @@ START_TEST (memblockq_test) {
     };
 
     p = pa_mempool_new(PA_MEM_TYPE_PRIVATE, 0, true);
+    ck_assert_ptr_ne(p, NULL);
 
     silence.memblock = pa_memblock_new_fixed(p, (char*) "__", 2, 1);
     fail_unless(silence.memblock != NULL);
