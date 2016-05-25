@@ -163,6 +163,12 @@ START_TEST (memblockq_test_initial_properties) {
     ck_assert_int_eq(pa_memblockq_get_read_index(bq), 0);
     ck_assert_int_eq(pa_memblockq_get_write_index(bq), 0);
 
+    // check reporting of missing bytes
+    // Initially, tlength bytes are missing, the second call doesn't
+    // report additional missing data though.
+    ck_assert_int_eq(pa_memblockq_pop_missing(bq), tlength);
+    ck_assert_int_eq(pa_memblockq_pop_missing(bq), 0);
+
     // cleanup
     pa_memblockq_free(bq);
     pa_memblock_unref(silence.memblock);
