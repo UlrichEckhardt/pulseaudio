@@ -287,8 +287,6 @@ START_TEST (memblockq_test_length_changes) {
     size_t minreq = 40;
     size_t maxrewind = 40;
 
-    pa_log_set_level(PA_LOG_DEBUG);
-
     p = pa_mempool_new(PA_MEM_TYPE_PRIVATE, 0, true);
     ck_assert_ptr_ne(p, NULL);
 
