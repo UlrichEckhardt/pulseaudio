@@ -129,6 +129,10 @@ START_TEST (modargs_test_get_value_u32) {
     /* test extracting and parsing failure */
     ck_assert_int_lt(pa_modargs_get_value_u32(args, "def", &value), 0);
 
+    /* test extracting an undefined value */
+    // TODO: this test fails to signal failure
+    ck_assert_int_lt(pa_modargs_get_value_u32(args, "ghi", &value), 0);
+
     pa_modargs_free(args);
 }
 END_TEST
@@ -152,6 +156,10 @@ START_TEST (modargs_test_get_value_s32) {
     /* test extracting and parsing failure */
     ck_assert_int_lt(pa_modargs_get_value_s32(args, "def", &value), 0);
 
+    /* test extracting an undefined value */
+    // TODO: this test fails to signal failure
+    ck_assert_int_lt(pa_modargs_get_value_s32(args, "ghi", &value), 0);
+
     pa_modargs_free(args);
 }
 END_TEST
@@ -174,6 +182,10 @@ START_TEST (modargs_test_get_value_boolean) {
 
     /* test extracting and parsing failure */
     ck_assert_int_lt(pa_modargs_get_value_boolean(args, "def", &value), 0);
+
+    /* test extracting an undefined value */
+    // TODO: this test fails to signal failure
+    ck_assert_int_lt(pa_modargs_get_value_boolean(args, "ghi", &value), 0);
 
     pa_modargs_free(args);
 }
@@ -199,6 +211,10 @@ START_TEST (modargs_test_get_value_double) {
     /* test extracting and parsing failure */
     ck_assert_int_lt(pa_modargs_get_value_double(args, "def", &value), 0);
 
+    /* test extracting an undefined value */
+    // TODO: this test fails to signal failure
+    ck_assert_int_lt(pa_modargs_get_value_double(args, "ghi", &value), 0);
+
     pa_modargs_free(args);
 }
 END_TEST
@@ -221,6 +237,10 @@ START_TEST (modargs_test_get_value_volume) {
 
     /* test extracting and parsing failure */
     ck_assert_int_lt(pa_modargs_get_value_volume(args, "valueZ", &value), 0);
+
+    /* test extracting an undefined value */
+    // TODO: this test fails to signal failure
+    ck_assert_int_lt(pa_modargs_get_value_volume(args, "unknown", &value), 0);
 
     pa_modargs_free(args);
 }
